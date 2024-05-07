@@ -1,0 +1,30 @@
+# docker-compose.yml
+version: '3.7'
+
+services:
+  #docker run -d -p 5000:5000 --name=service_a --network=network_service rom04/service_a:0.0.1.RELEASE
+  service_a:
+    image: rom04/demo_service_a:0.0.1.RELEASE
+    restart: always
+    ports:
+      - "5000:5000"
+    networks:
+      - network_service
+    container_name: service_a
+  
+  #docker run -d -p 5100:5100--env SERVICE_A_NAME=service_a--name=service_b --network=network_service rom04/service_b:0.0.2.RELEASE
+  service_b:
+    image: rom04/demo_service_b:0.0.3.RELEASE
+    restart: always
+    ports:
+      - "5100:5100"
+    environment:
+      - SERVICE_A_NAME=service_a  # Correctly set the environment variable
+    networks:
+      - network_service
+    depends_on:
+      - service_a
+    container_name: service_b
+
+networks:
+  network_service:
